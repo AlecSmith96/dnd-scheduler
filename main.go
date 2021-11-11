@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	adapters.HandleRequests()
+	adapters.Router()
 }
