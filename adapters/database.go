@@ -2,10 +2,11 @@ package adapters
 
 import (
 	"fmt"
-	// "time"
+	"log"
+	"time"
 
 	"github.com/AlecSmith96/dnd-scheduler/entities"
-	// "github.com/google/uuid"
+	"github.com/google/uuid"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -18,64 +19,68 @@ func GetConn(config *entities.Config) (*gorm.DB, error) {
 }
 
 func TearDownDB(db *gorm.DB) {
-	// db.Exec("DELETE FROM players")
-	// db.Exec("DELETE FROM groups")
-	// db.Exec("DELETE FROM sessions")
-
-	db.Migrator().DropTable(&entities.Player{})
 	db.Migrator().DropTable(&entities.Group{})
 	db.Migrator().DropTable(&entities.Session{})
+	db.Migrator().DropTable(&entities.Player{})
+	db.Migrator().DropTable("players_sessions")
+	db.Migrator().DropTable("players_groups")
 }
 
 // Creates db tables and populates with test data
 func PopulateDB(db *gorm.DB) {
-	db.Migrator().CreateTable(&entities.Session{})
-	db.Migrator().CreateTable(&entities.Player{})
-	db.Migrator().CreateTable(&entities.Group{})
+	db.AutoMigrate(&entities.Player{}, &entities.Session{}, &entities.Group{})
 
-	// db.AutoMigrate(&entities.Player{},&entities.Session{}, &entities.Group{})
+	players := []entities.Player{
+		{ID: uuid.New(), Username: "Player 1", Cookie: ""},
+		{ID: uuid.New(), Username: "Player 2", Cookie: ""},
+		{ID: uuid.New(), Username: "Player 3", Cookie: ""},
+	}
+	for index := range players {
+		db.Create(&players[index])
+	}
 
-	// player1 := entities.Player{
-	// 	ID: uuid.New(),
-	// 	Username: "Player 1",
-	// 	Cookie: "",
-	// }
-	// player2 := entities.Player{
-	// 	ID: uuid.New(),
-	// 	Username: "Player 1",
-	// 	Cookie: "",
-	// }
-	// player3 := entities.Player{
-	// 	ID: uuid.New(),
-	// 	Username: "Player 1",
-	// 	Cookie: "",
-	// }
+	group := entities.Group{ID: uuid.New(), Name: "My Group"}
+	db.Create(&group)
 
-	// session1 := entities.Session{
-	// 	ID: uuid.New(),
-	// 	Name: "Session 1",
-	// 	From: time.Now(),
-	// 	To: time.Now().Add(12 * time.Hour),
-	// }
+	session1 := entities.Session{
+		ID:      uuid.New(),
+		GroupID: group.ID,
+		Name:    "Session 1",
+		From:    time.Now(),
+		To:      time.Now().Add(12 * time.Hour),
+	}
+	session2 := entities.Session{
+		ID:      uuid.New(),
+		GroupID: group.ID,
+		Name:    "Session 2",
+		From:    time.Now().Add(24 * time.Hour),
+		To:      time.Now().Add(36 * time.Hour),
+	}
 
-	// session2 := entities.Session{
-	// 	ID: uuid.New(),
-	// 	Name: "Session 2",
-	// 	From: time.Now(),
-	// 	To: time.Now().Add(12 * time.Hour),
-	// }
+	db.Create(&session1)
+	db.Create(&session2)
 
-	// group := entities.Group{
-	// 	ID: uuid.New(),
-	// 	Players: []entities.Player{player1, player2, player3},
-	// 	Sessions: []entities.Session{session1, session2},
-	// }
+	// TODO: look into associations to manipulate many2many relationship
+	// https://gorm.io/docs/associations.html#Association-Mode
 
-	// db.Create(player1)
-	// db.Create(player2)
-	// db.Create(player3)
-	// db.Create(group)
-	// db.Create(session1)
-	// db.Create(session2)
+	// Make player >-< groups connections
+	for index := range players {
+		db.Model(&players[index]).Association("Groups").Append(&group)
+	}
+
+	// Make player >-< session connections
+	for index := range players {
+		db.Model(&players[index]).Association("Sessions").Append(&session1)
+		if index%2 == 0 {
+			db.Model(&players[index]).Association("Sessions").Append(&session2)
+		}
+	}
+
+	var foundGroup entities.Group
+	db.First(&foundGroup)
+	log.Println(foundGroup)
+	var sessions entities.Player
+	db.Model(&foundGroup).Association("Sessions").Find(&sessions)
+	log.Println(sessions)
+	
 }
-

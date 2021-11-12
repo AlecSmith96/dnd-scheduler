@@ -11,5 +11,5 @@ import (
 func HandleRequests() {
 	log.Println("Server listening on port 8080...")
 	http.HandleFunc("/", usecases.GetHomepage)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))
 }

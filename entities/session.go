@@ -7,8 +7,9 @@ import (
 )
 
 type Session struct {
-	ID   uuid.UUID `gorm:"column:session_id;primary_key"`
-	Name string    `gorm:"column:name"`
-	From time.Time `gorm:"column:from"`
-	To   time.Time `gorm:"column:to"`
+	ID      uuid.UUID `gorm:"PrimaryKey"`
+	GroupID uuid.UUID
+	Name    string
+	From    time.Time
+	To      time.Time
 }
