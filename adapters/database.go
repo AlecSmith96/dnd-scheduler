@@ -78,9 +78,9 @@ func PopulateDB(db *gorm.DB) {
 
 	var foundGroup entities.Group
 	db.First(&foundGroup)
-	log.Println(foundGroup)
-	var sessions entities.Player
+	var sessions []entities.Session
 	db.Model(&foundGroup).Association("Sessions").Find(&sessions)
-	log.Println(sessions)
-	
+	foundGroup.Sessions = sessions
+
+	log.Println(foundGroup)
 }
