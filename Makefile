@@ -6,6 +6,6 @@ setup_swagger:
 swagger_gen:
 	swagger generate spec -o ./swagger.yaml --scan-models
 
-.PHONY: swagger_view
-swagger_view:
+.PHONY: swagger_serve
+swagger_serve:
 	swagger serve -F=swagger swagger.yaml
