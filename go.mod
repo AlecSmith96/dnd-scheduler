@@ -2,12 +2,11 @@ module github.com/AlecSmith96/dnd-scheduler
 
 go 1.17
 
-require github.com/go-chi/chi/v5 v5.0.5 // indirect
-require gorm.io/driver/postgres v1.2.1
-
-require gopkg.in/yaml.v2 v2.4.0
 
 require (
+	github.com/go-chi/chi/v5 v5.0.5
+	gorm.io/driver/postgres v1.2.1
+	gopkg.in/yaml.v2 v2.4.0
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
@@ -59,9 +58,6 @@ require (
 	golang.org/x/tools v0.1.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/ini.v1 v1.64.0 // indirect
-)
-
-require (
 	github.com/google/uuid v1.3.0
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.10.0 // indirect
@@ -73,7 +69,7 @@ require (
 	github.com/jackc/pgx/v4 v4.13.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.2 // indirect
-	github.com/pdrum/swagger-automation v0.0.0-20190629163613-c8c7c80ba858
+	github.com/pdrum/swagger-automation v0.0.0-20190629163613-c8c7c80ba858 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gorm.io/gorm v1.22.2
