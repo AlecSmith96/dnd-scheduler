@@ -60,9 +60,6 @@ func PopulateDB(db *gorm.DB) {
 	db.Create(&session1)
 	db.Create(&session2)
 
-	// TODO: look into associations to manipulate many2many relationship
-	// https://gorm.io/docs/associations.html#Association-Mode
-
 	// Make player >-< groups connections
 	for index := range players {
 		db.Model(&players[index]).Association("Groups").Append(&group)
