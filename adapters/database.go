@@ -2,7 +2,6 @@ package adapters
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/AlecSmith96/dnd-scheduler/entities"
