@@ -13,22 +13,25 @@ func Router() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-  r.Route("/api", func(r chi.Router) {
-    r.Post("/users/", usecases.CreateUserHandler)
-    r.Get("/users/{userId}", usecases.GetUserHandler)
-    r.Put("/users/{userId}", usecases.UpdateUserHandler)
-    r.Delete("/users/{userId}", usecases.DeleteUserHandler)
+	r.Route("/api", func(r chi.Router) {
+		r.Get("/players", usecases.GetAllPlayersHandler)
+		r.Post("/players", usecases.CreatePlayerHandler)
+		r.Get("/players/{playerId}", usecases.GetPlayerHandler)
+		r.Put("/players/{playerId}", usecases.UpdatePlayerHandler)
+		r.Delete("/players/{playerId}", usecases.DeletePlayerHandler)
 
-    r.Post("/group", usecases.CreateGroupHandler)
-    r.Get("/group/{groupId}", usecases.GetGroupHandler)
-    r.Put("/group/{groupId}", usecases.UpdateGroupHandler)
-    r.Delete("/group/{groupId}", usecases.DeleteGroupHandler)
+		r.Get("/group", usecases.GetAllGroupsHandler)
+		r.Post("/group", usecases.CreateGroupHandler)
+		r.Get("/group/{groupId}", usecases.GetGroupHandler)
+		r.Put("/group/{groupId}", usecases.UpdateGroupHandler)
+		r.Delete("/group/{groupId}", usecases.DeleteGroupHandler)
 
-    r.Post("/session", usecases.CreateSessionHandler)
-    r.Get("/session/{sessionId}", usecases.GetSessionHandler)
-    r.Put("/session/{sessionId}", usecases.UpdateSessionHandler)
-    r.Delete("/session/{sessionId}", usecases.DeleteSessionHandler)
-  })
+		r.Get("/session", usecases.GetAllSessionsHandler)
+		r.Post("/session", usecases.CreateSessionHandler)
+		r.Get("/session/{sessionId}", usecases.GetSessionHandler)
+		r.Put("/session/{sessionId}", usecases.UpdateSessionHandler)
+		r.Delete("/session/{sessionId}", usecases.DeleteSessionHandler)
+	})
 
 	port := "3000"
 	log.Println("Listening on port", port)
