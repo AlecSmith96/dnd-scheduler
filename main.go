@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/AlecSmith96/dnd-scheduler/adapters"
+	_ "github.com/AlecSmith96/dnd-scheduler/docs"
 	"github.com/AlecSmith96/dnd-scheduler/entities"
 	"gopkg.in/yaml.v2"
 )
