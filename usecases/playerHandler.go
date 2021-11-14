@@ -8,45 +8,45 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func GetAllGroupsHandler(w http.ResponseWriter, r *http.Request) {
+func GetAllPlayersHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	message := entities.Message{
-		Message: "All groups here",
+		Message: "All players here",
 	}
 	json.NewEncoder(w).Encode(message)
 }
 
-func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
+func CreatePlayerHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	message := entities.Message{
-		Message: "Created group!",
+		Message: "Created player!",
 	}
 	json.NewEncoder(w).Encode(message)
 }
 
-func GetGroupHandler(w http.ResponseWriter, r *http.Request) {
+func GetPlayerHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
-	groupParam := chi.URLParam(r, "groupId")
+	playerParam := chi.URLParam(r, "playerId")
 	message := entities.Message{
-		Message: "Got group, " + groupParam + "!",
+		Message: "Hello, " + playerParam + "!",
 	}
 	json.NewEncoder(w).Encode(message)
 }
 
-func UpdateGroupHandler(w http.ResponseWriter, r *http.Request) {
+func UpdatePlayerHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
-	groupParam := chi.URLParam(r, "groupId")
+	playerParam := chi.URLParam(r, "playerId")
 	message := entities.Message{
-		Message: "Update group, " + groupParam + "!",
+		Message: "Updated player, " + playerParam + "!",
 	}
 	json.NewEncoder(w).Encode(message)
 }
 
-func DeleteGroupHandler(w http.ResponseWriter, r *http.Request) {
+func DeletePlayerHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
-	groupParam := chi.URLParam(r, "groupId")
+	playerParam := chi.URLParam(r, "playerId")
 	message := entities.Message{
-		Message: "Delete group, " + groupParam + "!",
+		Message: "Deleted player, " + playerParam + "!",
 	}
 	json.NewEncoder(w).Encode(message)
 }
