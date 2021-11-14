@@ -11,7 +11,7 @@ import (
 
 func Serve(router chi.Router, config *entities.Config) {
 	port := strconv.Itoa(config.Server.Port)
-  host := config.Server.Host
+	host := config.Server.Host
 	log.Println("Listening on port", port)
 	http.ListenAndServe(host+":"+port, router)
 }
