@@ -33,5 +33,6 @@ func main() {
 	adapters.TearDownDB(db)
 	adapters.PopulateDB(db)
 
-	adapters.HandleRequests()
+	router := adapters.Router()
+	adapters.Serve(router, &config)
 }
