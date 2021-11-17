@@ -13,7 +13,7 @@ type GroupHandler struct {
 	db *gorm.DB
 }
 
-func (handler *GroupHandler) GetAllGroupsHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *GroupHandler) GetAllGroups(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	message := entities.Message{
 		Message: "All groups here",
@@ -21,7 +21,7 @@ func (handler *GroupHandler) GetAllGroupsHandler(w http.ResponseWriter, r *http.
 	json.NewEncoder(w).Encode(message)
 }
 
-func (handler *GroupHandler) CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *GroupHandler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	message := entities.Message{
 		Message: "Created group!",
@@ -29,7 +29,7 @@ func (handler *GroupHandler) CreateGroupHandler(w http.ResponseWriter, r *http.R
 	json.NewEncoder(w).Encode(message)
 }
 
-func (handler *GroupHandler) GetGroupHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *GroupHandler) GetGroup(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	groupParam := chi.URLParam(r, "groupId")
 	message := entities.Message{
@@ -38,7 +38,7 @@ func (handler *GroupHandler) GetGroupHandler(w http.ResponseWriter, r *http.Requ
 	json.NewEncoder(w).Encode(message)
 }
 
-func (handler *GroupHandler) UpdateGroupHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *GroupHandler) UpdateGroup(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	groupParam := chi.URLParam(r, "groupId")
 	message := entities.Message{
@@ -47,7 +47,7 @@ func (handler *GroupHandler) UpdateGroupHandler(w http.ResponseWriter, r *http.R
 	json.NewEncoder(w).Encode(message)
 }
 
-func (handler *GroupHandler) DeleteGroupHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *GroupHandler) DeleteGroup(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	groupParam := chi.URLParam(r, "groupId")
 	message := entities.Message{

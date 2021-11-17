@@ -20,11 +20,11 @@ func Router(db *gorm.DB) chi.Router {
 		r.Put("/players/{playerId}", usecases.UpdatePlayerHandler)
 		r.Delete("/players/{playerId}", usecases.DeletePlayerHandler)
 
-		r.Get("/group", groupHandler.GetAllGroupsHandler)
-		r.Post("/group", usecases.CreateGroupHandler)
-		r.Get("/group/{groupId}", usecases.GetGroupHandler)
-		r.Put("/group/{groupId}", usecases.UpdateGroupHandler)
-		r.Delete("/group/{groupId}", usecases.DeleteGroupHandler)
+		r.Get("/group", groupHandler.GetAllGroups)
+		r.Post("/group", groupHandler.CreateGroup)
+		r.Get("/group/{groupId}", groupHandler.GetGroup)
+		r.Put("/group/{groupId}", groupHandler.UpdateGroup)
+		r.Delete("/group/{groupId}", groupHandler.DeleteGroup)
 
 		r.Get("/session", usecases.GetAllSessionsHandler)
 		r.Post("/session", usecases.CreateSessionHandler)
