@@ -4,11 +4,14 @@ import (
 	"github.com/AlecSmith96/dnd-scheduler/usecases"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"gorm.io/gorm"
 )
 
-func Router() chi.Router {
+func Router(db *gorm.DB) chi.Router {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger, middleware.StripSlashes)
+
+	groupHandler := usecases.NewGroupHandler(db)
 
 	r.Route("/api", func(r chi.Router) {
 		r.Get("/players", usecases.GetAllPlayersHandler)
@@ -17,7 +20,7 @@ func Router() chi.Router {
 		r.Put("/players/{playerId}", usecases.UpdatePlayerHandler)
 		r.Delete("/players/{playerId}", usecases.DeletePlayerHandler)
 
-		r.Get("/group", usecases.GetAllGroupsHandler)
+		r.Get("/group", groupHandler.GetAllGroupsHandler)
 		r.Post("/group", usecases.CreateGroupHandler)
 		r.Get("/group/{groupId}", usecases.GetGroupHandler)
 		r.Put("/group/{groupId}", usecases.UpdateGroupHandler)

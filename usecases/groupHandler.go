@@ -6,9 +6,14 @@ import (
 
 	"github.com/AlecSmith96/dnd-scheduler/entities"
 	"github.com/go-chi/chi/v5"
+	"gorm.io/gorm"
 )
 
-func GetAllGroupsHandler(w http.ResponseWriter, r *http.Request) {
+type GroupHandler struct {
+	db *gorm.DB
+}
+
+func (handler *GroupHandler) GetAllGroupsHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	message := entities.Message{
 		Message: "All groups here",
@@ -16,7 +21,7 @@ func GetAllGroupsHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(message)
 }
 
-func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *GroupHandler) CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	message := entities.Message{
 		Message: "Created group!",
@@ -24,7 +29,7 @@ func CreateGroupHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(message)
 }
 
-func GetGroupHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *GroupHandler) GetGroupHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	groupParam := chi.URLParam(r, "groupId")
 	message := entities.Message{
@@ -33,7 +38,7 @@ func GetGroupHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(message)
 }
 
-func UpdateGroupHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *GroupHandler) UpdateGroupHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	groupParam := chi.URLParam(r, "groupId")
 	message := entities.Message{
@@ -42,11 +47,17 @@ func UpdateGroupHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(message)
 }
 
-func DeleteGroupHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *GroupHandler) DeleteGroupHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	groupParam := chi.URLParam(r, "groupId")
 	message := entities.Message{
 		Message: "Delete group, " + groupParam + "!",
 	}
 	json.NewEncoder(w).Encode(message)
+}
+
+func NewGroupHandler(dbConn *gorm.DB) *GroupHandler {
+	return &GroupHandler{
+		db: dbConn,
+	}
 }
