@@ -11,13 +11,13 @@ import (
 )
 
 type GroupHandler struct {
-	db *gorm.DB
+	DB *gorm.DB
 }
 
 // Return all groups with their sessions information
 func (handler *GroupHandler) GetAllGroups(w http.ResponseWriter, r *http.Request) {
 	groups := make([]entities.Group, 0)
-	err := handler.db.Preload("Sessions").Find(&groups).Error
+	err := handler.DB.Preload("Sessions").Find(&groups).Error
 
 	if len(groups) == 0 || err != nil {
 		message := entities.Message{
@@ -42,7 +42,7 @@ func (handler *GroupHandler) CreateGroup(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	dbErr := handler.db.Create(&group).Error
+	dbErr := handler.DB.Create(&group).Error
 	if dbErr != nil {
 		log.Printf("Unable to create new record: %v", dbErr)
 		message := entities.Message{
@@ -83,6 +83,6 @@ func (handler *GroupHandler) DeleteGroup(w http.ResponseWriter, r *http.Request)
 
 func NewGroupHandler(dbConn *gorm.DB) *GroupHandler {
 	return &GroupHandler{
-		db: dbConn,
+		DB: dbConn,
 	}
 }
