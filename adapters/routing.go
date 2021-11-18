@@ -12,13 +12,13 @@ func Router(db *gorm.DB) chi.Router {
 	r.Use(middleware.Logger, middleware.StripSlashes)
 
 	groupHandler := usecases.NewGroupHandler(db)
+	playerHandler := usecases.NewPlayerHandler(db)
 
 	r.Route("/api", func(r chi.Router) {
-		r.Get("/players", usecases.GetAllPlayersHandler)
-		r.Post("/players", usecases.CreatePlayerHandler)
-		r.Get("/players/{playerId}", usecases.GetPlayerHandler)
-		r.Put("/players/{playerId}", usecases.UpdatePlayerHandler)
-		r.Delete("/players/{playerId}", usecases.DeletePlayerHandler)
+		r.Get("/players", playerHandler.GetAllPlayers)
+		r.Get("/players/{playerId}", playerHandler.GetPlayer)
+		r.Put("/players/{playerId}", playerHandler.UpdatePlayer)
+		r.Delete("/players/{playerId}", playerHandler.DeletePlayer)
 
 		r.Get("/group", groupHandler.GetAllGroups)
 		r.Post("/group", groupHandler.CreateGroup)
