@@ -11,43 +11,21 @@ import (
 )
 
 type PlayerHandler struct {
-	db *gorm.DB
+	DB *gorm.DB
 }
 
 type PlayerList struct {
-	Items []*entities.Player `json:"items"`
+	Players []*entities.Player `json:"players"`
 }
 
 func (p *PlayerList) Render(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-type ErrResponse struct {
-	Err            error `json:"-"` // low-level runtime error
-	HTTPStatusCode int   `json:"-"` // http response status code
-
-	StatusText string `json:"status" example:"Resource not found."`                                         // user-level status message
-	AppCode    int64  `json:"code,omitempty" example:"404"`                                                 // application-specific error code
-	ErrorText  string `json:"error,omitempty" example:"The requested resource was not found on the server"` // application-level error message, for debugging
-}
-
-func (p *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
-	return nil
-}
-
 func (handler *PlayerHandler) PlayerListResponse() *PlayerList {
 	players := &PlayerList{}
-	handler.db.Preload("Sessions").Preload("Groups").Find(&players.Items)
+	handler.DB.Preload("Sessions").Preload("Groups").Find(&players.Players)
 	return players
-}
-
-func ErrRender(err error) render.Renderer {
-	return &ErrResponse{
-		Err:            err,
-		HTTPStatusCode: http.StatusUnprocessableEntity,
-		StatusText:     "Error rendering response.",
-		ErrorText:      err.Error(),
-	}
 }
 
 func (handler *PlayerHandler) GetAllPlayers(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +38,7 @@ func (handler *PlayerHandler) GetAllPlayers(w http.ResponseWriter, r *http.Reque
 func (handler *PlayerHandler) CreatePlayer(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	message := entities.Message{
-		Message: "Created player!",
+		Message: "Hey",
 	}
 	json.NewEncoder(w).Encode(message)
 }
@@ -69,7 +47,7 @@ func (handler *PlayerHandler) GetPlayer(w http.ResponseWriter, r *http.Request) 
 	// TODO: Implement actual function
 	playerParam := chi.URLParam(r, "playerId")
 	message := entities.Message{
-		Message: "Hello, " + playerParam + "!",
+		Message: "Hello " + playerParam + "!",
 	}
 	json.NewEncoder(w).Encode(message)
 }
@@ -94,6 +72,6 @@ func (handler *PlayerHandler) DeletePlayer(w http.ResponseWriter, r *http.Reques
 
 func NewPlayerHandler(dbConn *gorm.DB) *PlayerHandler {
 	return &PlayerHandler{
-		db: dbConn,
+		DB: dbConn,
 	}
 }

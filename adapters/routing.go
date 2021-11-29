@@ -16,6 +16,7 @@ func Router(db *gorm.DB) chi.Router {
 
 	r.Route("/api", func(r chi.Router) {
 		r.Get("/players", playerHandler.GetAllPlayers)
+		r.Post("/players", playerHandler.CreatePlayer)
 		r.Get("/players/{playerId}", playerHandler.GetPlayer)
 		r.Put("/players/{playerId}", playerHandler.UpdatePlayer)
 		r.Delete("/players/{playerId}", playerHandler.DeletePlayer)
