@@ -4,12 +4,15 @@ import (
 	"github.com/AlecSmith96/dnd-scheduler/usecases"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"gorm.io/gorm"
 )
 
 func Router(db *gorm.DB) chi.Router {
 	r := chi.NewRouter()
-	r.Use(middleware.Logger, middleware.StripSlashes)
+	r.Use(middleware.Logger, middleware.StripSlashes, cors.Handler(cors.Options{
+		AllowedOrigins: []string{"*"},
+	}))
 
 	groupHandler := usecases.NewGroupHandler(db)
 	playerHandler := usecases.NewPlayerHandler(db)
