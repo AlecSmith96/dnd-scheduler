@@ -4,8 +4,8 @@ setup_swagger:
 
 .PHONY: swagger_gen
 swagger_gen:
-	swagger generate spec -o ./swagger.yaml --scan-models
+	swagger generate spec -o ./docs/swagger.yaml --scan-models
 
 .PHONY: swagger_serve
 swagger_serve:
-	swagger serve -F=swagger swagger.yaml
+	swagger serve --no-open -p 5000 -F=swagger ./docs/swagger.yaml

@@ -14,7 +14,10 @@ type PlayerHandler struct {
 	DB *gorm.DB
 }
 
+// List of players
+// swagger:response PlayerList
 type PlayerList struct {
+	// in:body
 	Players []*entities.Player `json:"players"`
 }
 
@@ -28,6 +31,12 @@ func (handler *PlayerHandler) PlayerListResponse() *PlayerList {
 	return players
 }
 
+// swagger:route GET /players Player listPlayers
+//
+// List all players
+//
+// responses:
+//	200: PlayerList
 func (handler *PlayerHandler) GetAllPlayers(w http.ResponseWriter, r *http.Request) {
 	if err := render.Render(w, r, handler.PlayerListResponse()); err != nil {
 		_ = render.Render(w, r, ErrRender(err))

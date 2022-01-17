@@ -1,0 +1,119 @@
+basePath: /api
+consumes:
+- Application/json
+definitions:
+  Group:
+    properties:
+      ID:
+        $ref: '#/definitions/UUID'
+      Name:
+        type: string
+      Sessions:
+        items:
+          $ref: '#/definitions/Session'
+        type: array
+    type: object
+    x-go-package: github.com/AlecSmith96/dnd-scheduler/entities
+  Message:
+    properties:
+      message:
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-package: github.com/AlecSmith96/dnd-scheduler/entities
+  Player:
+    properties:
+      cookie:
+        type: string
+        x-go-name: Cookie
+      groups:
+        items:
+          $ref: '#/definitions/Group'
+        type: array
+        x-go-name: Groups
+      id:
+        $ref: '#/definitions/UUID'
+      name:
+        type: string
+        x-go-name: Username
+      sessions:
+        items:
+          $ref: '#/definitions/Session'
+        type: array
+        x-go-name: Sessions
+    type: object
+    x-go-package: github.com/AlecSmith96/dnd-scheduler/entities
+  Session:
+    properties:
+      From:
+        format: date-time
+        type: string
+      GroupID:
+        $ref: '#/definitions/UUID'
+      ID:
+        $ref: '#/definitions/UUID'
+      Name:
+        type: string
+      To:
+        format: date-time
+        type: string
+    type: object
+    x-go-package: github.com/AlecSmith96/dnd-scheduler/entities
+  UUID:
+    description: |-
+      A UUID is a 128 bit (16 byte) Universal Unique IDentifier as defined in RFC
+      4122.
+    items:
+      format: uint8
+      type: integer
+    type: array
+    x-go-package: github.com/google/uuid
+host: localhost:8080
+info:
+  description: REST APIs for scheduling D&D sessions
+  title: D&D Scheduler API.
+  version: v1
+paths:
+  /:
+    get:
+      operationId: request_1
+      responses:
+        "200":
+          $ref: '#/responses/Message'
+      summary: Get Homepage returns JSON welcome message.
+      tags:
+      - GetHomepage
+  /players:
+    get:
+      description: List all players
+      operationId: listPlayers
+      responses:
+        "200":
+          $ref: '#/responses/PlayerList'
+      tags:
+      - Player
+    post:
+      description: |-
+        Create a new player
+        response:
+        200: Guid
+      operationId: createNewPlayer
+      tags:
+      - Player
+produces:
+- application/json
+responses:
+  Message:
+    description: Message field with the welcome message.
+    schema:
+      $ref: '#/definitions/Message'
+  PlayerList:
+    description: List of players
+    schema:
+      items:
+        $ref: '#/definitions/Player'
+      type: array
+schemes:
+- http
+- https
+swagger: "2.0"
