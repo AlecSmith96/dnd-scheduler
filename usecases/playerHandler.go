@@ -25,9 +25,11 @@ func (p *PlayerList) Render(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
+
 func (handler *PlayerHandler) PlayerListResponse() *PlayerList {
 	players := &PlayerList{}
-	handler.DB.Preload("Sessions").Preload("Groups").Find(&players.Players)
+	// handler.DB.Preload("Sessions").Preload("Groups").Find(&players.Players)
+	handler.DB.Find(&players.Players)
 	return players
 }
 
@@ -44,12 +46,24 @@ func (handler *PlayerHandler) GetAllPlayers(w http.ResponseWriter, r *http.Reque
 	}
 }
 
+// swagger:route POST /players Player createNewPlayer
+//
+// Create a new player
 func (handler *PlayerHandler) CreatePlayer(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement actual function
-	message := entities.Message{
-		Message: "Hey",
+	player := &entities.Player{}
+	if err := render.Bind(r, player); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
 	}
-	json.NewEncoder(w).Encode(message)
+	result := handler.DB.Create(player); 
+	if result.Error != nil {
+		render.Render(w, r, ErrRender(result.Error))
+		return
+	}
+	if err := render.Render(w, r, player); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
 }
 
 func (handler *PlayerHandler) GetPlayer(w http.ResponseWriter, r *http.Request) {
