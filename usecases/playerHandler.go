@@ -14,53 +14,41 @@ type PlayerHandler struct {
 	DB *gorm.DB
 }
 
-// List of players
-// swagger:response PlayerList
-type PlayerList struct {
-	// in:body
-	Players []*entities.Player `json:"players"`
-}
-
-func (p *PlayerList) Render(w http.ResponseWriter, r *http.Request) error {
-	return nil
-}
-
-
-func (handler *PlayerHandler) PlayerListResponse() *PlayerList {
-	players := &PlayerList{}
-	// handler.DB.Preload("Sessions").Preload("Groups").Find(&players.Players)
-	handler.DB.Find(&players.Players)
-	return players
-}
-
-// swagger:route GET /players Player listPlayers
-//
-// List all players
-//
-// responses:
-//	200: PlayerList
 func (handler *PlayerHandler) GetAllPlayers(w http.ResponseWriter, r *http.Request) {
-	if err := render.Render(w, r, handler.PlayerListResponse()); err != nil {
-		_ = render.Render(w, r, ErrRender(err))
-		return
-	}
-}
-
-// swagger:route POST /players Player createNewPlayer
-//
-// Create a new player
-func (handler *PlayerHandler) CreatePlayer(w http.ResponseWriter, r *http.Request) {
-	player := &entities.Player{}
-	if err := render.Bind(r, player); err != nil {
-		render.Render(w, r, ErrRender(err))
-		return
-	}
-	result := handler.DB.Create(player); 
-	if result.Error != nil {
+	// swagger:route GET /players Player listPlayers
+	//
+	// List all players
+	//
+	// responses:
+	//	200: PlayerList
+	var players entities.PlayerList
+	if result := handler.DB.Find(&players.Players); result.Error != nil {
 		render.Render(w, r, ErrRender(result.Error))
 		return
 	}
-	if err := render.Render(w, r, player); err != nil {
+	if err := render.Render(w, r, &players); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+}
+
+func (handler *PlayerHandler) CreatePlayer(w http.ResponseWriter, r *http.Request) {
+	// swagger:route POST /players Player createNewPlayer
+	//
+	// Create a new player
+	//
+	// responses:
+	//	200: Player
+	var player entities.Player
+	if err := render.Bind(r, &player); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+	if result := handler.DB.Create(&player); result.Error != nil {
+		render.Render(w, r, ErrRender(result.Error))
+		return
+	}
+	if err := render.Render(w, r, &player); err != nil {
 		render.Render(w, r, ErrRender(err))
 		return
 	}
@@ -76,12 +64,30 @@ func (handler *PlayerHandler) GetPlayer(w http.ResponseWriter, r *http.Request) 
 }
 
 func (handler *PlayerHandler) UpdatePlayer(w http.ResponseWriter, r *http.Request) {
+	// swagger:route PUT /players/{playerId} Player updatePlayer
+	// Update an existing player
+	// responses:
+	//	200: Player
 	// TODO: Implement actual function
-	playerParam := chi.URLParam(r, "playerId")
-	message := entities.Message{
-		Message: "Updated player, " + playerParam + "!",
+	var player entities.Player
+	var updatedPlayerData entities.Player
+	playerId := chi.URLParam(r, "playerId")
+	if err := render.Bind(r, &updatedPlayerData); err != nil {
+		println("Binding body failed")
+		render.Render(w, r, ErrRender(err))
+		return
 	}
-	json.NewEncoder(w).Encode(message)
+	println(player.ID.String());
+	if result := handler.DB.First(&player, "id = ?", playerId); result.Error != nil {
+		println("Finding player", playerId ,"failed")
+		render.Status(r, http.StatusNotFound)
+		return
+	}
+	if result := handler.DB.Model(&player).Updates(&updatedPlayerData); result.Error != nil {
+		println("Update of  player", playerId ,"failed")
+		render.Render(w, r, ErrRender(result.Error))
+		return
+	}
 }
 
 func (handler *PlayerHandler) DeletePlayer(w http.ResponseWriter, r *http.Request) {
