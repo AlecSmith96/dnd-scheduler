@@ -12,6 +12,7 @@ func Router(db *gorm.DB) chi.Router {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger, middleware.StripSlashes, cors.Handler(cors.Options{
 		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 	}))
 
 	groupHandler := usecases.NewGroupHandler(db)

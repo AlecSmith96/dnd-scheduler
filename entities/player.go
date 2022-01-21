@@ -45,7 +45,7 @@ type PlayerParamsWrapper struct {
 	Body PlayerCreate
 }
 
-// swagger:parameters updatePlayer deletePlayer
+// swagger:parameters getPlayer updatePlayer deletePlayer
 type PlayerId struct {
 	// in:path
 	PlayerId string `json:"playerId"`

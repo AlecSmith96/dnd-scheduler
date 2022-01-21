@@ -1,7 +1,6 @@
 package usecases
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/AlecSmith96/dnd-scheduler/entities"
@@ -26,6 +25,8 @@ func (handler *PlayerHandler) GetAllPlayers(w http.ResponseWriter, r *http.Reque
 		render.Render(w, r, ErrRender(result.Error))
 		return
 	}
+
+	// Try to return players
 	if err := render.Render(w, r, &players); err != nil {
 		render.Render(w, r, ErrRender(err))
 		return
@@ -48,6 +49,8 @@ func (handler *PlayerHandler) CreatePlayer(w http.ResponseWriter, r *http.Reques
 		render.Render(w, r, ErrRender(result.Error))
 		return
 	}
+
+	// Try to return created player
 	if err := render.Render(w, r, &player); err != nil {
 		render.Render(w, r, ErrRender(err))
 		return
@@ -55,48 +58,65 @@ func (handler *PlayerHandler) CreatePlayer(w http.ResponseWriter, r *http.Reques
 }
 
 func (handler *PlayerHandler) GetPlayer(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement actual function
-	playerParam := chi.URLParam(r, "playerId")
-	message := entities.Message{
-		Message: "Hello " + playerParam + "!",
+	// swagger:route GET /players/{playerId} Player getPlayer
+	//
+	// Get a specific player
+	//
+	// responses:
+	//	200: Player
+	playerId := chi.URLParam(r, "playerId")
+	var player entities.Player
+
+	if result := handler.DB.First(&player, "id = ?", playerId); result.Error != nil {
+		render.Render(w, r, ErrNotFound)
+		return
 	}
-	json.NewEncoder(w).Encode(message)
+
+	// Try to return found player
+	if err := render.Render(w, r, &player); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
 }
 
 func (handler *PlayerHandler) UpdatePlayer(w http.ResponseWriter, r *http.Request) {
 	// swagger:route PUT /players/{playerId} Player updatePlayer
+	//
 	// Update an existing player
+	//
 	// responses:
-	//	200: Player
-	// TODO: Implement actual function
+	//	200: description: No content
+	playerId := chi.URLParam(r, "playerId")
 	var player entities.Player
 	var updatedPlayerData entities.Player
-	playerId := chi.URLParam(r, "playerId")
+
 	if err := render.Bind(r, &updatedPlayerData); err != nil {
-		println("Binding body failed")
 		render.Render(w, r, ErrRender(err))
 		return
 	}
-	println(player.ID.String());
 	if result := handler.DB.First(&player, "id = ?", playerId); result.Error != nil {
-		println("Finding player", playerId ,"failed")
-		render.Status(r, http.StatusNotFound)
+		render.Render(w, r, ErrNotFound)
 		return
 	}
 	if result := handler.DB.Model(&player).Updates(&updatedPlayerData); result.Error != nil {
-		println("Update of  player", playerId ,"failed")
 		render.Render(w, r, ErrRender(result.Error))
 		return
 	}
 }
 
 func (handler *PlayerHandler) DeletePlayer(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement actual function
-	playerParam := chi.URLParam(r, "playerId")
-	message := entities.Message{
-		Message: "Deleted player, " + playerParam + "!",
+	// swagger:route DELETE /players/{playerId} Player deletePlayer
+	//
+	// Delete an existing player
+	//
+	// responses:
+	//	200: description: No content
+	playerId := chi.URLParam(r, "playerId")
+
+	if result := handler.DB.Delete(&entities.Player{}, "id = ?", playerId); result.Error != nil {
+		render.Render(w, r, ErrRender(result.Error))
+		return
 	}
-	json.NewEncoder(w).Encode(message)
 }
 
 func NewPlayerHandler(dbConn *gorm.DB) *PlayerHandler {
