@@ -80,7 +80,7 @@ func (handler *PlayerHandler) GetPlayer(w http.ResponseWriter, r *http.Request) 
 }
 
 func (handler *PlayerHandler) UpdatePlayer(w http.ResponseWriter, r *http.Request) {
-	// swagger:route PUT /players/{playerId} Player updatePlayer
+	// swagger:route PATCH /players/{playerId} Player updatePlayer
 	//
 	// Update an existing player
 	//

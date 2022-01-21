@@ -12,7 +12,7 @@ func Router(db *gorm.DB) chi.Router {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger, middleware.StripSlashes, cors.Handler(cors.Options{
 		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 	}))
 
 	groupHandler := usecases.NewGroupHandler(db)
@@ -22,19 +22,19 @@ func Router(db *gorm.DB) chi.Router {
 		r.Get("/players", playerHandler.GetAllPlayers)
 		r.Post("/players", playerHandler.CreatePlayer)
 		r.Get("/players/{playerId}", playerHandler.GetPlayer)
-		r.Put("/players/{playerId}", playerHandler.UpdatePlayer)
+		r.Patch("/players/{playerId}", playerHandler.UpdatePlayer)
 		r.Delete("/players/{playerId}", playerHandler.DeletePlayer)
 
 		r.Get("/group", groupHandler.GetAllGroups)
 		r.Post("/group", groupHandler.CreateGroup)
 		r.Get("/group/{groupId}", groupHandler.GetGroup)
-		r.Put("/group/{groupId}", groupHandler.UpdateGroup)
+		r.Patch("/group/{groupId}", groupHandler.UpdateGroup)
 		r.Delete("/group/{groupId}", groupHandler.DeleteGroup)
 
 		r.Get("/session", usecases.GetAllSessionsHandler)
 		r.Post("/session", usecases.CreateSessionHandler)
 		r.Get("/session/{sessionId}", usecases.GetSessionHandler)
-		r.Put("/session/{sessionId}", usecases.UpdateSessionHandler)
+		r.Patch("/session/{sessionId}", usecases.UpdateSessionHandler)
 		r.Delete("/session/{sessionId}", usecases.DeleteSessionHandler)
 	})
 
