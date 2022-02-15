@@ -1,3 +1,17 @@
+// Package docs D&D Scheduler API.
+// REST APIs for scheduling D&D sessions
+//
+// Schemes: http, https
+// Host: localhost:8080
+// BasePath: /api
+// Version: 0.0.1
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// - application/json
+// swagger:meta
 package docs
 
 import (
