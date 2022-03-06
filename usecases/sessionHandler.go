@@ -6,17 +6,29 @@ import (
 
 	"github.com/AlecSmith96/dnd-scheduler/entities"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/render"
+	"gorm.io/gorm"
 )
 
-func GetAllSessionsHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement actual function
-	message := entities.Message{
-		Message: "All sessions here",
-	}
-	json.NewEncoder(w).Encode(message)
+type SessionHandler struct {
+	DB *gorm.DB
 }
 
-func CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *SessionHandler) GetAllSessionsHandler(w http.ResponseWriter, r *http.Request) {
+	var sessions entities.SessionList
+	if result := handler.DB.Find(&sessions.Sessions); result.Error != nil {
+		render.Render(w, r, ErrRender(result.Error))
+		return
+	}
+
+	// Try to return players
+	if err := render.Render(w, r, &sessions); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+}
+
+func (handler *SessionHandler) CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	message := entities.Message{
 		Message: "Created session!",
@@ -24,7 +36,7 @@ func CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(message)
 }
 
-func GetSessionHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *SessionHandler) GetSessionHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	sessionParam := chi.URLParam(r, "id")
 	message := entities.Message{
@@ -33,7 +45,7 @@ func GetSessionHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(message)
 }
 
-func UpdateSessionHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *SessionHandler) UpdateSessionHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	sessionParam := chi.URLParam(r, "sessionId")
 	message := entities.Message{
@@ -42,11 +54,17 @@ func UpdateSessionHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(message)
 }
 
-func DeleteSessionHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *SessionHandler) DeleteSessionHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	sessionParam := chi.URLParam(r, "sessionId")
 	message := entities.Message{
 		Message: "Deleted session, " + sessionParam + "!",
 	}
 	json.NewEncoder(w).Encode(message)
+}
+
+func NewSessionHandler(dbConn *gorm.DB) *SessionHandler {
+	return &SessionHandler{
+		DB: dbConn,
+	}
 }
