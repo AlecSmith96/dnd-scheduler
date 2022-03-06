@@ -14,7 +14,13 @@ type SessionHandler struct {
 	DB *gorm.DB
 }
 
-func (handler *SessionHandler) GetAllSessionsHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *SessionHandler) GetAllSessions(w http.ResponseWriter, r *http.Request) {
+	// swagger:route GET /sessions Session listSessions
+	//
+	// List all sessions
+	//
+	// responses:
+	//	200: SessionList
 	var sessions entities.SessionList
 	if result := handler.DB.Find(&sessions.Sessions); result.Error != nil {
 		render.Render(w, r, ErrRender(result.Error))
@@ -28,15 +34,31 @@ func (handler *SessionHandler) GetAllSessionsHandler(w http.ResponseWriter, r *h
 	}
 }
 
-func (handler *SessionHandler) CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement actual function
-	message := entities.Message{
-		Message: "Created session!",
+func (handler *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
+	// swagger:route POST /session Session createNewSession
+	//
+	// Create a new session
+	//
+	// responses:
+	//	200: Session
+	var session entities.Session
+	if err := render.Bind(r, &session); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
 	}
-	json.NewEncoder(w).Encode(message)
+	if result := handler.DB.Create(&session); result.Error != nil {
+		render.Render(w, r, ErrRender(result.Error))
+		return
+	}
+
+	// Try to return created player
+	if err := render.Render(w, r, &session); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
 }
 
-func (handler *SessionHandler) GetSessionHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *SessionHandler) GetSession(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	sessionParam := chi.URLParam(r, "id")
 	message := entities.Message{
@@ -45,7 +67,7 @@ func (handler *SessionHandler) GetSessionHandler(w http.ResponseWriter, r *http.
 	json.NewEncoder(w).Encode(message)
 }
 
-func (handler *SessionHandler) UpdateSessionHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	sessionParam := chi.URLParam(r, "sessionId")
 	message := entities.Message{
@@ -54,7 +76,7 @@ func (handler *SessionHandler) UpdateSessionHandler(w http.ResponseWriter, r *ht
 	json.NewEncoder(w).Encode(message)
 }
 
-func (handler *SessionHandler) DeleteSessionHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *SessionHandler) DeleteSession(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement actual function
 	sessionParam := chi.URLParam(r, "sessionId")
 	message := entities.Message{
