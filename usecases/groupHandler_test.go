@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
-	"time"
 
 	"github.com/AlecSmith96/dnd-scheduler/usecases"
 	sqlmock "github.com/DATA-DOG/go-sqlmock"
@@ -63,22 +62,15 @@ func (s *GroupHandlerSuite) TestGetAllGroups_HappyPath() {
 	handler := http.HandlerFunc(s.groupHandler.GetAllGroups)
 
 	groupId := uuid.New()
-	sessionId := uuid.New()
-	from, _ := time.Parse("2006-01-02T15:04:05.0000000Z", "2021-11-18T21:54:23.2332927Z")
-	to, _ := time.Parse("2006-01-02T15:04:05.0000000Z", "2021-11-19T00:54:23.2332927Z")
 	s.sqlmock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "groups"`)).
 		WillReturnRows(s.sqlmock.NewRows([]string{"id", "name"}).
 			AddRow(groupId, "Group Name"))
 
-	s.sqlmock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "sessions" WHERE "sessions"."group_id" = $1`)).
-		WithArgs(groupId).
-		WillReturnRows(s.sqlmock.NewRows([]string{"id", "group_id", "Name", "From", "To"}).
-			AddRow(sessionId, groupId, "Session Name", from, to))
-
 	handler.ServeHTTP(responseRecorder, req)
 
-	expectedResponse := fmt.Sprintf("[{\"ID\":\"%s\",\"Name\":\"Group Name\",\"Sessions\":[{\"ID\":\"%s\",\"GroupID\":\"%s\",\"Name\":\"Session Name\",\"From\":\"%s\",\"To\":\"%s\"}]}]\n", 
-		groupId, sessionId, groupId, from.Format("2006-01-02T15:04:05.0000000Z"), to.Format("2006-01-02T15:04:05.0000000Z"))
+	expectedResponse := fmt.Sprintf(
+		"{\"groups\":[{\"id\":\"%s\",\"name\":\"Group Name\",\"sessions\":null}]}\n", 
+		groupId)
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), http.StatusOK, responseRecorder.Code, "response return non-200 status")
 	assert.Equal(s.T(), expectedResponse, responseRecorder.Body.String(), "unexpected response body")
