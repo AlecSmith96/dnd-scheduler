@@ -15,10 +15,10 @@ import (
 
 func GetConn(config *entities.Config) (*gorm.DB, error) {
 	newLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		log.New(os.Stdout, "\r\n", log.LstdFlags), 	// io writer
 		logger.Config{
 		  SlowThreshold:              time.Second,   // Slow SQL threshold
-		  LogLevel:                   logger.Info, // Log level
+		  LogLevel:                   logger.Info, 	// Log level
 		  IgnoreRecordNotFoundError: true,           // Ignore ErrRecordNotFound error for logger
 		  Colorful:                  true,          // Disable color
 		},
@@ -56,38 +56,30 @@ func PopulateDB(db *gorm.DB) {
 	group := entities.Group{ID: uuid.New(), Name: "My Group"}
 	db.Create(&group)
 
-	_ = []entities.Session{
+	sessions := []entities.Session{
 		{
 			ID: uuid.New(), 
-			// GroupID: group.ID,
+			GroupID: group.ID,
 			Name: "Session 1", 
 			From: time.Now(), 
 			To: time.Now().Add(12 * time.Hour),
 		},
 		{
 			ID:      uuid.New(),
-			// GroupID: group.ID,
+			GroupID: group.ID,
 			Name:    "Session 2",
 			From:    time.Now().Add(24 * time.Hour),
 			To:      time.Now().Add(36 * time.Hour),
 		},
 		
 	}
-	// for index := range sessions {
-	// 	// db.Model(&group).Association("Sessions").Append(&sessions[index])
-	// 	// db.Create(&sessions[index])
-	// }
+
+	for index := range sessions {
+		db.Create(&sessions[index])
+	}
 
 	// Make player >-< groups connections
 	for index := range players {
 		db.Model(&players[index]).Association("Groups").Append(&group)
 	}
-
-	// Make player >-< session connections
-	// for index := range players {
-	// 	db.Model(&players[index]).Association("Sessions").Append(&sessions[0])
-	// 	if index%2 == 0 {
-	// 		db.Model(&players[index]).Association("Sessions").Append(&sessions[1])
-	// 	}
-	// }
 }

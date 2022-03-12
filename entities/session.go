@@ -11,7 +11,7 @@ import (
 
 type Session struct {
 	ID      uuid.UUID `gorm:"PrimaryKey"`
-	// GroupID uuid.UUID `gorm:"foreignKey:ID"`
+	GroupID uuid.UUID `gorm:"foreignKey:ID"`
 	Name    string
 	From    time.Time
 	To      time.Time

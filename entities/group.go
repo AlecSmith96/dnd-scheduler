@@ -11,7 +11,7 @@ import (
 type Group struct {
 	ID       uuid.UUID `gorm:"PrimaryKey" json:"id"`
 	Name     string		`json:"name"`
-	Sessions []Session `gorm:"foreignKey:ID" json:"sessions"`
+	Sessions []Session `gorm:"foreignKey:GroupID" json:"sessions"`
 }
 
 type GroupCreate struct {
