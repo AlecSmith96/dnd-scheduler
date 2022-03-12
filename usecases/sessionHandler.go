@@ -1,7 +1,6 @@
 package usecases
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/AlecSmith96/dnd-scheduler/entities"
@@ -35,7 +34,7 @@ func (handler *SessionHandler) GetAllSessions(w http.ResponseWriter, r *http.Req
 }
 
 func (handler *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
-	// swagger:route POST /session Session createNewSession
+	// swagger:route POST /sessions Session createNewSession
 	//
 	// Create a new session
 	//
@@ -59,30 +58,65 @@ func (handler *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Requ
 }
 
 func (handler *SessionHandler) GetSession(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement actual function
-	sessionParam := chi.URLParam(r, "id")
-	message := entities.Message{
-		Message: "Got session, " + sessionParam + "!",
+	// swagger:route POST /sessions/{sessionId} Session getSession
+	//
+	// Create a new session
+	//
+	// responses:
+	//	200: Session
+	sessionId := chi.URLParam(r, "sessionId")
+	var session entities.Session
+
+	if result := handler.DB.First(&session, "id = ?", sessionId); result.Error != nil {
+		render.Render(w, r, ErrNotFound)
+		return
 	}
-	json.NewEncoder(w).Encode(message)
+
+	// Try to return found player
+	if err := render.Render(w, r, &session); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
 }
 
 func (handler *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement actual function
-	sessionParam := chi.URLParam(r, "sessionId")
-	message := entities.Message{
-		Message: "Updated session, " + sessionParam + "!",
+	// swagger:route PATCH /sessions/{sessionId} Session updateSession
+	//
+	// Update an existing session
+	//
+	// responses:
+	//	200: description: No content
+	sessionId := chi.URLParam(r, "sessionId")
+	var session entities.Session
+	var updatedSessionData entities.Session
+
+	if err := render.Bind(r, &updatedSessionData); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
 	}
-	json.NewEncoder(w).Encode(message)
+	if result := handler.DB.First(&session, "id = ?", sessionId); result.Error != nil {
+		render.Render(w, r, ErrNotFound)
+		return
+	}
+	if result := handler.DB.Model(&session).Updates(&updatedSessionData); result.Error != nil {
+		render.Render(w, r, ErrRender(result.Error))
+		return
+	}
 }
 
 func (handler *SessionHandler) DeleteSession(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement actual function
-	sessionParam := chi.URLParam(r, "sessionId")
-	message := entities.Message{
-		Message: "Deleted session, " + sessionParam + "!",
+	// swagger:route DELETE /sessions/{sessionId} Session deleteSession
+	//
+	// Delete an existing session
+	//
+	// responses:
+	//	200: description: No content
+	sessionId := chi.URLParam(r, "sessionId")
+
+	if result := handler.DB.Delete(&entities.Session{}, "id = ?", sessionId); result.Error != nil {
+		render.Render(w, r, ErrRender(result.Error))
+		return
 	}
-	json.NewEncoder(w).Encode(message)
 }
 
 func NewSessionHandler(dbConn *gorm.DB) *SessionHandler {
