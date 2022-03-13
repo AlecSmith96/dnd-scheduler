@@ -1,7 +1,6 @@
 package usecases
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/AlecSmith96/dnd-scheduler/entities"
@@ -14,7 +13,13 @@ type SessionHandler struct {
 	DB *gorm.DB
 }
 
-func (handler *SessionHandler) GetAllSessionsHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *SessionHandler) GetAllSessions(w http.ResponseWriter, r *http.Request) {
+	// swagger:route GET /sessions Session listSessions
+	//
+	// List all sessions
+	//
+	// responses:
+	//	200: SessionList
 	var sessions entities.SessionList
 	if result := handler.DB.Find(&sessions.Sessions); result.Error != nil {
 		render.Render(w, r, ErrRender(result.Error))
@@ -28,39 +33,90 @@ func (handler *SessionHandler) GetAllSessionsHandler(w http.ResponseWriter, r *h
 	}
 }
 
-func (handler *SessionHandler) CreateSessionHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement actual function
-	message := entities.Message{
-		Message: "Created session!",
+func (handler *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
+	// swagger:route POST /sessions Session createNewSession
+	//
+	// Create a new session
+	//
+	// responses:
+	//	200: Session
+	var session entities.Session
+	if err := render.Bind(r, &session); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
 	}
-	json.NewEncoder(w).Encode(message)
+	if result := handler.DB.Create(&session); result.Error != nil {
+		render.Render(w, r, ErrRender(result.Error))
+		return
+	}
+
+	// Try to return created player
+	if err := render.Render(w, r, &session); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
 }
 
-func (handler *SessionHandler) GetSessionHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement actual function
-	sessionParam := chi.URLParam(r, "id")
-	message := entities.Message{
-		Message: "Got session, " + sessionParam + "!",
+func (handler *SessionHandler) GetSession(w http.ResponseWriter, r *http.Request) {
+	// swagger:route GET /sessions/{sessionId} Session getSession
+	//
+	// Get an existing session
+	//
+	// responses:
+	//	200: Session
+	sessionId := chi.URLParam(r, "sessionId")
+	var session entities.Session
+
+	if result := handler.DB.First(&session, "id = ?", sessionId); result.Error != nil {
+		render.Render(w, r, ErrNotFound)
+		return
 	}
-	json.NewEncoder(w).Encode(message)
+
+	// Try to return found player
+	if err := render.Render(w, r, &session); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
 }
 
-func (handler *SessionHandler) UpdateSessionHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement actual function
-	sessionParam := chi.URLParam(r, "sessionId")
-	message := entities.Message{
-		Message: "Updated session, " + sessionParam + "!",
+func (handler *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
+	// swagger:route PATCH /sessions/{sessionId} Session updateSession
+	//
+	// Update an existing session
+	//
+	// responses:
+	//	200: description: No content
+	sessionId := chi.URLParam(r, "sessionId")
+	var session entities.Session
+	var updatedSessionData entities.Session
+
+	if err := render.Bind(r, &updatedSessionData); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
 	}
-	json.NewEncoder(w).Encode(message)
+	if result := handler.DB.First(&session, "id = ?", sessionId); result.Error != nil {
+		render.Render(w, r, ErrNotFound)
+		return
+	}
+	if result := handler.DB.Model(&session).Updates(&updatedSessionData); result.Error != nil {
+		render.Render(w, r, ErrRender(result.Error))
+		return
+	}
 }
 
-func (handler *SessionHandler) DeleteSessionHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement actual function
-	sessionParam := chi.URLParam(r, "sessionId")
-	message := entities.Message{
-		Message: "Deleted session, " + sessionParam + "!",
+func (handler *SessionHandler) DeleteSession(w http.ResponseWriter, r *http.Request) {
+	// swagger:route DELETE /sessions/{sessionId} Session deleteSession
+	//
+	// Delete an existing session
+	//
+	// responses:
+	//	200: description: No content
+	sessionId := chi.URLParam(r, "sessionId")
+
+	if result := handler.DB.Delete(&entities.Session{}, "id = ?", sessionId); result.Error != nil {
+		render.Render(w, r, ErrRender(result.Error))
+		return
 	}
-	json.NewEncoder(w).Encode(message)
 }
 
 func NewSessionHandler(dbConn *gorm.DB) *SessionHandler {

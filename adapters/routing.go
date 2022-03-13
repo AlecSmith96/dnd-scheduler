@@ -32,11 +32,11 @@ func Router(db *gorm.DB) chi.Router {
 		r.Patch("/group/{groupId}", groupHandler.UpdateGroup)
 		r.Delete("/group/{groupId}", groupHandler.DeleteGroup)
 
-		r.Get("/session", sessionHandler.GetAllSessionsHandler)
-		r.Post("/session", sessionHandler.CreateSessionHandler)
-		r.Get("/session/{sessionId}", sessionHandler.GetSessionHandler)
-		r.Patch("/session/{sessionId}", sessionHandler.UpdateSessionHandler)
-		r.Delete("/session/{sessionId}", sessionHandler.DeleteSessionHandler)
+		r.Get("/sessions", sessionHandler.GetAllSessions)
+		r.Post("/sessions", sessionHandler.CreateSession)
+		r.Get("/sessions/{sessionId}", sessionHandler.GetSession)
+		r.Patch("/sessions/{sessionId}", sessionHandler.UpdateSession)
+		r.Delete("/sessions/{sessionId}", sessionHandler.DeleteSession)
 	})
 
 	return r

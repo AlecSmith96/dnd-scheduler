@@ -11,14 +11,17 @@ import (
 
 type Session struct {
 	ID      uuid.UUID `gorm:"PrimaryKey"`
-	// GroupID uuid.UUID `gorm:"foreignKey:ID"`
+	GroupID uuid.UUID `gorm:"foreignKey:ID"`
 	Name    string
 	From    time.Time
 	To      time.Time
 }
 
 type SessionCreate struct {
-	Name string `json:"name"`
+	GroupID uuid.UUID `json:"groupId"`
+	Name    string    `json:"name"`
+	From    time.Time `json:"from"`
+	To      time.Time `json:"to"`
 }
 
 func (s *Session) BeforeCreate(tx *gorm.DB) (err error) {
@@ -26,7 +29,7 @@ func (s *Session) BeforeCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
-func (s *Session) Bind(r *http.Request) error  {
+func (s *Session) Bind(r *http.Request) error {
 	// Runs after unmarshalling is complete, do postprocessing
 	if s.Name == "" {
 		return errors.New("missing requried Name field")
