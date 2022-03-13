@@ -58,9 +58,9 @@ func (handler *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Requ
 }
 
 func (handler *SessionHandler) GetSession(w http.ResponseWriter, r *http.Request) {
-	// swagger:route POST /sessions/{sessionId} Session getSession
+	// swagger:route GET /sessions/{sessionId} Session getSession
 	//
-	// Create a new session
+	// Get an existing session
 	//
 	// responses:
 	//	200: Session
